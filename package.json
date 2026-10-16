@@ -10,7 +10,7 @@
     "open": "npx cypress open"
   },
   "keywords": [],
-  "author": "test",
+  "author": "Test",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
