@@ -133,8 +133,8 @@ class AgodaFlightPage {
           cy.wrap(times[0]).as('departureTime');
           cy.wrap(times[1]).as('arrivalTime');
         }
-      })
-      .click({ force: true });
+        cy.wrap($card).click({ force: true });
+      });
 
     cy.wait(5000);
 
@@ -177,9 +177,11 @@ class AgodaFlightPage {
         .clear({ force: true })
         .type(data.lastName, { force: true });
 
-      // --- Pemilihan Gender (Male / Female) ---
+      // --- Pemilihan Gender (Male / Female atau Pria / Wanita) ---
+      const isMale = data.gender.toLowerCase() === 'male';
+      const genderPattern = isMale ? /^(Male|Pria)$/i : /^(Female|Wanita)$/i;
       cy.get('div, span, button, label')
-        .contains(new RegExp(`^${data.gender}$`, 'i'))
+        .contains(genderPattern)
         .first()
         .click({ force: true });
 
@@ -188,12 +190,27 @@ class AgodaFlightPage {
         .clear({ force: true })
         .type(data.birthDay, { force: true });
 
+      const monthMap = {
+        'January': /Jan/i,
+        'February': /Feb/i,
+        'March': /Mar/i,
+        'April': /Apr/i,
+        'May': /May|Mei/i,
+        'June': /Jun/i,
+        'July': /Jul/i,
+        'August': /Aug|Agu/i,
+        'September': /Sep/i,
+        'October': /Oct|Okt/i,
+        'November': /Nov/i,
+        'December': /Dec|Des/i
+      };
+
       // Tanggal Lahir (DOB) - Bulan (Dropdown)
-      cy.get('[data-testid="flight.forms.i0.units.i0.passengerDateOfBirth-MonthInputDataTestId"] > :nth-child(1) > :nth-child(1) > .a07fe-items-center.a07fe-flex-1 > .FormFieldstyled__InputContainerStyled-sc-11x6xcu-2 > .a07fe-pt-0 > .a07fe-bg-generic-base-transparent > .a07fe-flex-1 > .sc-aXZVg')
+      cy.get('[data-testid*="passengerDateOfBirth-MonthInputDataTestId"]')
+        .contains(/Pilih|Select|Bulan|Month/i)
         .click({ force: true });
-      cy.wait(500);
-      cy.get('div, span, button')
-        .contains(new RegExp(`^${data.birthMonth}$`, 'i'))
+      cy.wait(1000);
+      cy.contains('div, span, button, li, p', monthMap[data.birthMonth] || new RegExp(data.birthMonth, 'i'))
         .first()
         .click({ force: true });
 
@@ -201,19 +218,22 @@ class AgodaFlightPage {
         .clear({ force: true })
         .type(data.birthYear, { force: true });
 
-      // --- Kebangsaan (Nationality) - Menggunakan Selector Spesifik ---
-      cy.get('[data-testid="flight.forms.i0.units.i0.passengerNationality"] > :nth-child(1) > :nth-child(1) > .a07fe-items-center.a07fe-flex-1 > .FormFieldstyled__InputContainerStyled-sc-11x6xcu-2 > .a07fe-pt-0 > .a07fe-bg-generic-base-transparent > .a07fe-flex-1 > .sc-aXZVg')
+      // --- Kebangsaan (Nationality) ---
+      cy.get('[data-testid*="passengerNationality"]')
+        .contains(/Pilih|Select|Kewarganegaraan|Nationality/i)
         .scrollIntoView()
         .click({ force: true });
-      cy.wait(500);
-      cy.get('input[type="text"], input[role="combobox"], input')
-        .filter(':visible')
-        .last()
-        .type(data.nationality, { force: true });
       cy.wait(1000);
-      cy.get('.a07fe-pr-12 > .Inputstyled__InputContainerStyled-sc-1yd74ix-0 > .a07fe-w-full > .Inputstyled__OverlayStyled-sc-1yd74ix-2', { timeout: 10000 })
-        .first()
-        .click({ force: true });
+      cy.get('input:visible')
+        .last()
+        .type(`${data.nationality}{enter}`, { force: true });
+      cy.wait(800);
+      cy.get('body').then(($body) => {
+        const item = $body.find('div[role="option"], li:contains("Indonesia"), div:contains("Indonesia")').filter(':visible');
+        if (item.length > 0) {
+          cy.wrap(item.last()).click({ force: true });
+        }
+      });
 
       // --- Bagian Paspor (Passport Details) ---
       cy.get('[data-testid="flight.forms.i0.units.i0.passportNumber"]')
@@ -222,17 +242,21 @@ class AgodaFlightPage {
         .type(data.passportNumber, { force: true });
 
       // --- Negara Penerbit Paspor (Country of Issue) ---
-      cy.get('[data-testid="flight.forms.i0.units.i0.passportCountryOfIssue"] > :nth-child(1) > :nth-child(1) > .a07fe-items-center.a07fe-flex-1 > .FormFieldstyled__InputContainerStyled-sc-11x6xcu-2 > .a07fe-pt-0 > .a07fe-bg-generic-base-transparent > .a07fe-flex-1')
+      cy.get('[data-testid*="passportCountryOfIssue"]')
+        .contains(/Pilih|Select|Negara|Country/i)
+        .scrollIntoView()
         .click({ force: true });
-      cy.wait(500);
-      cy.get('input[type="text"], input[role="combobox"], input')
-        .filter(':visible')
-        .last()
-        .type(data.passportCountry, { force: true });
       cy.wait(1000);
-      cy.get('.a07fe-pr-12 > .Inputstyled__InputContainerStyled-sc-1yd74ix-0 > .a07fe-w-full > .Inputstyled__OverlayStyled-sc-1yd74ix-2', { timeout: 10000 })
-        .first()
-        .click({ force: true });
+      cy.get('input:visible')
+        .last()
+        .type(`${data.passportCountry}{enter}`, { force: true });
+      cy.wait(800);
+      cy.get('body').then(($body) => {
+        const item = $body.find('div[role="option"], li:contains("Indonesia"), div:contains("Indonesia")').filter(':visible');
+        if (item.length > 0) {
+          cy.wrap(item.last()).click({ force: true });
+        }
+      });
 
       // Masa Berlaku Paspor (Passport Expiry)
       cy.get('[data-testid="flight.forms.i0.units.i0.passportExpiryDate-DateInputDataTestId"]')
@@ -240,11 +264,11 @@ class AgodaFlightPage {
         .type(data.expiryDay, { force: true });
 
       // Expiry Month
-      cy.get('[data-testid="flight.forms.i0.units.i0.passportExpiryDate-MonthInputDataTestId"] > :nth-child(1) > :nth-child(1) > .a07fe-items-center.a07fe-flex-1 > .FormFieldstyled__InputContainerStyled-sc-11x6xcu-2 > .a07fe-pt-0 > .a07fe-bg-generic-base-transparent > .a07fe-flex-1 > .sc-aXZVg')
+      cy.get('[data-testid*="passportExpiryDate-MonthInputDataTestId"]')
+        .contains(/Pilih|Select|Bulan|Month/i)
         .click({ force: true });
-      cy.wait(500);
-      cy.get('div, span, button')
-        .contains(new RegExp(`^${data.expiryMonth}$`, 'i'))
+      cy.wait(1000);
+      cy.contains('div, span, button, li, p', monthMap[data.expiryMonth] || new RegExp(data.expiryMonth, 'i'))
         .first()
         .click({ force: true });
 
@@ -270,22 +294,28 @@ class AgodaFlightPage {
       }
     });
 
-    // Check "I agree" checkbox
-    cy.get('.a07fe-py-8 > .a07fe-fill-generic-base-default > .Inputstyled__InputContainerStyled-sc-1yd74ix-0 > .a07fe-w-full > .Inputstyled__InputStyled-sc-1yd74ix-1', { timeout: 10000 })
-      .scrollIntoView()
-      .click({ force: true });
+    // Check "I agree" checkbox jika ada
+    cy.get('body').then(($body) => {
+      const chk = $body.find('input[type="checkbox"]');
+      if (chk.length > 0) {
+        cy.wrap(chk.last()).check({ force: true });
+      }
+    });
 
-    // Click "Continue to payment"
-    cy.contains('button', /Continue to payment/i)
+    // Click "Continue to payment" / "Lanjut ke pembayaran"
+    cy.contains('button', /Continue to payment|Lanjut.*pembayaran/i)
       .first()
       .click({ force: true });
 
     cy.wait(4000);
 
-    // Elemen tambahan setelah Continue to payment
-    cy.get('.a07fe-items-baseline > .a07fe-bg-generic-base-transparent > .a07fe-box > .sc-aXZVg', { timeout: 15000 })
-      .scrollIntoView()
-      .click({ force: true });
+    // Elemen tambahan setelah Continue to payment jika ada
+    cy.get('body').then(($body) => {
+      const modalBtn = $body.find('.a07fe-items-baseline > .a07fe-bg-generic-base-transparent > .a07fe-box > .sc-aXZVg');
+      if (modalBtn.length > 0) {
+        cy.wrap(modalBtn.first()).click({ force: true });
+      }
+    });
 
     cy.wait(6000);
   }

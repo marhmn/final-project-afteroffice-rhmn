@@ -4,12 +4,13 @@
   "description": "Final Project AfterOffice",
   "main": "index.js",
   "scripts": {
-    "test": "npx cypress run --browser chrome",
-    "test:electron": "npx cypress run",
-    "open": "npx cypress open --browser chrome"
+    "test": "npx cypress run --browser firefox",
+    "test:firefox": "npx cypress run --browser firefox",
+    "test:chrome": "npx cypress run --browser chrome",
+    "open": "npx cypress open"
   },
   "keywords": [],
-  "author": "",
+  "author": "Test",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {

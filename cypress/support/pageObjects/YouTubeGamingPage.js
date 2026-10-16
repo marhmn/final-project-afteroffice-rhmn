@@ -1,69 +1,60 @@
 class YouTubeGamingPage {
   visit() {
+    // Set cookie YouTube agar selalu berbahasa Inggris (hl=en)
+    cy.setCookie('PREF', 'hl=en&gl=US', { domain: '.youtube.com' });
+
     cy.visit(Cypress.expose('youtube_url') || 'https://www.youtube.com');
     cy.wait(3000);
   }
 
   goToGaming() {
-    cy.get('ytd-guide-collapsible-section-entry-renderer, #expander-item')
-      .contains('Show more')
-      .should('be.visible')
-      .click({ force: true });
-    
-    cy.wait(1000);
+    // Klik link Gaming pada sidebar secara langsung tanpa memicu crash expander animasi
+    cy.get('body').then(($body) => {
+      const gLink = $body.find('a[href*="/gaming"]');
+      if (gLink.length > 0) {
+        gLink[0].click();
+      } else {
+        // Fallback jika belum ter-render: navigasi via Cypress visit URL
+        cy.visit((Cypress.expose('youtube_url') || 'https://www.youtube.com') + '/gaming');
+      }
+    });
 
-    cy.get('ytd-guide-entry-renderer')
-      .contains('Gaming')
-      .click({ force: true });
-
-    cy.url().should('include', '/gaming');
+    cy.url({ timeout: 15000 }).should('include', '/gaming');
     cy.wait(2000);
   }
 
   clickTrendingViewAll() {
-    // 1. Scroll bertahap ke bawah hingga teks "Trending" atau "Trending videos" muncul
-    cy.document().then(() => {
-      const scrollStep = () => {
-        return cy.get('body').then(($body) => {
-          if ($body.text().includes('Trending')) {
-            return;
-          } else {
-            cy.scrollTo(0, '+=' + 600);
-            cy.wait(600);
-            return scrollStep();
-          }
-        });
-      };
-      return scrollStep();
-    });
-
+    // 1. Scroll sedikit ke bawah agar shelf termuat
+    cy.scrollTo(0, 500);
     cy.wait(1500);
 
-    // 2. Temukan elemen rak (shelf) atau header yang memuat teks "Trending"
-    cy.contains('span', /Trending/i)
-      .should('be.visible')
+    // 2. Temukan shelf atau header yang memuat teks "Trending"
+    cy.contains(/Trending/i, { timeout: 15000 })
       .scrollIntoView({ block: 'center' });
 
     cy.wait(1000);
 
-    // 3. Ambil kontainer header/rak tersebut, lalu cari tombol/link "View all" / "See all" / ikon panah navigasi
-    cy.contains('span', /Trending/i)
-      .closest('ytd-shelf-renderer, ytd-rich-section-renderer, div#dismissible')
-      .then(($section) => {
-        // Cari tombol "View all", "See all", atau tombol panah navigasi (endpoint/button) di header rak
+    // 3. Klik tombol/link "View all" / "Lihat semua" di shelf Trending
+    cy.get('body').then(($body) => {
+      const $section = $body.find('ytd-shelf-renderer:contains("Trending"), ytd-rich-section-renderer:contains("Trending"), div#dismissible:contains("Trending")');
+      if ($section.length > 0) {
         const $viewAllBtn = $section.find('a#endpoint, a.yt-simple-endpoint, button, a').filter((i, el) => {
           const text = Cypress.$(el).text().toLowerCase();
-          return text.includes('view all') || text.includes('see all') || Cypress.$(el).has('iron-icon').length > 0;
+          return text.includes('view all') || text.includes('see all') || text.includes('semua') || text.includes('lihat') || Cypress.$(el).has('iron-icon').length > 0;
         });
 
         if ($viewAllBtn.length > 0) {
           cy.wrap($viewAllBtn.first()).click({ force: true });
-        } else {
-          // Fallback: Klik elemen tautan pertama di area header jika tombol spesifik tidak berlabel teks
-          cy.wrap($section).find('header a, #title-container a').first().click({ force: true });
+          return;
         }
-      });
-      
+      }
+
+      // Fallback: klik link yang memiliki teks View all / Lihat semua
+      cy.contains(/View all|See all|Lihat semua/i, { timeout: 10000 })
+        .first()
+        .click({ force: true });
+    });
+
     cy.wait(3000);
   }
 

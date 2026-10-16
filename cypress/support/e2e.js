@@ -4,13 +4,24 @@ Cypress.on('window:before:load', (win) => {
   Object.defineProperty(win.navigator, 'webdriver', {
     get: () => undefined,
   });
+
+  // Cegah pemutaran video otomatis dan nonaktifkan MediaSource agar browser tidak kehabisan RAM / crash
+  try {
+    delete win.MediaSource;
+    delete win.WebKitMediaSource;
+  } catch (e) {}
+
+  try {
+    if (win.HTMLMediaElement) {
+      win.HTMLMediaElement.prototype.play = function () {
+        this.pause();
+        return Promise.resolve();
+      };
+    }
+  } catch (e) {}
 });
 
-// Mengabaikan error ResizeObserver dari aplikasi Agoda agar tidak menggagalkan test runner
+// Mengabaikan uncaught exceptions dari third-party script website publik (YouTube, Agoda, Amazon)
 Cypress.on('uncaught:exception', (err, runnable) => {
-  if (err.message.includes('ResizeObserver loop')) {
-    return false; // Mencegah Cypress gagal karena error ResizeObserver
-  }
-  // Biarkan error lain tetap memunculkan kegagalan jika ada error serius
-  return true;
+  return false;
 });

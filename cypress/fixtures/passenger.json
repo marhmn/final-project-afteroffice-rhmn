@@ -1,17 +1,17 @@
 {
   "title": "Mr",
   "gender": "Male",
-  "firstName": "Budi",
-  "lastName": "Santoso",
-  "email": "budi.test@example.com",
-  "phoneNumber": "081234567890",
-  "birthDay": "15",
+  "firstName": "Test",
+  "lastName": "Test",
+  "email": "test@example.com",
+  "phoneNumber": "08934567890",
+  "birthDay": "10",
   "birthMonth": "May",
-  "birthYear": "1995",
+  "birthYear": "1996",
   "nationality": "Indonesia",
-  "passportNumber": "A1234567",
+  "passportNumber": "TEST1234",
   "passportCountry": "Indonesia",
-  "expiryDay": "20",
+  "expiryDay": "17",
   "expiryMonth": "August",
-  "expiryYear": "2032"
+  "expiryYear": "2040"
 }

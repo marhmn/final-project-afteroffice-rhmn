@@ -7,11 +7,10 @@ module.exports = defineConfig({
 
       on('before:browser:launch', (browser = {}, launchOptions) => {
         if (browser.family === 'chromium') {
-          // Optimasi memori agar browser tidak kehabisan RAM / crash
+          launchOptions.args.push('--lang=en-US');
           launchOptions.args.push('--disable-dev-shm-usage');
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push('--no-sandbox');
-          launchOptions.args.push('--js-flags=--max-old-space-size=2048');
         }
         return launchOptions;
       });
@@ -31,12 +30,6 @@ module.exports = defineConfig({
     video: true,
     videosFolder: 'cypress/reports/videos',
     numTestsKeptInMemory: 0,
-    blockHosts: [
-      '*google-analytics.com',
-      '*googletagmanager.com',
-      '*doubleclick.net',
-      '*clarity.ms'
-    ],
   },
   expose: {
     agoda_url: 'https://www.agoda.com',
