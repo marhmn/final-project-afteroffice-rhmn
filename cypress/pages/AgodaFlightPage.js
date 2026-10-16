@@ -149,7 +149,7 @@ class AgodaFlightPage {
 
   // 5. Fill Passenger Details Form
   fillPassengerDetails() {
-    cy.fixture('passenger').then((data) => {
+    cy.fixture('data').then((data) => {
       // --- Bagian Kontak (Contact Details) ---
       cy.get('[data-testid="contact.contactFirstName"]', { timeout: 15000 })
         .scrollIntoView()
@@ -322,7 +322,7 @@ class AgodaFlightPage {
 
   // 6. Validate Payment Page Data
   verifyPaymentPageDetails() {
-    cy.fixture('passenger').then((data) => {
+    cy.fixture('data').then((data) => {
       // 1. Validasi Detail Penumpang (Nama Lengkap)
       cy.contains(new RegExp(`${data.firstName}.*${data.lastName}`, 'i'), { timeout: 15000 })
         .should('be.visible');

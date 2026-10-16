@@ -1,4 +1,4 @@
-class YouTubeGamingPage {
+class YoutubeGamingPage {
   visit() {
     // Set cookie YouTube agar selalu berbahasa Inggris (hl=en)
     cy.setCookie('PREF', 'hl=en&gl=US', { domain: '.youtube.com' });
@@ -118,4 +118,4 @@ class YouTubeGamingPage {
   }
 }
 
-export default new YouTubeGamingPage();
+export default new YoutubeGamingPage();

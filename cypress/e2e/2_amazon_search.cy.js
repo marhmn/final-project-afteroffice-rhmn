@@ -1,4 +1,4 @@
-import AmazonSearchPage from '../support/pageObjects/AmazonSearchPage';
+import AmazonSearchPage from '../pages/AmazonSearchPage';
 
 describe('Amazon Chair Search and Validation', () => {
   beforeEach(() => {

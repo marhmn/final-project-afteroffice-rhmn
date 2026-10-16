@@ -1,14 +1,14 @@
-import YouTubeGamingPage from '../support/pageObjects/YouTubeGamingPage';
+import YoutubeGamingPage from '../pages/YoutubeGamingPage';
 
 describe('YouTube Gaming Trending Navigation and Validation', () => {
   beforeEach(() => {
-    YouTubeGamingPage.visit();
+    YoutubeGamingPage.visit();
   });
 
   it('Should navigate via sidebar, show more, gaming, click view all trending, and validate 3rd video title and channel', () => {
-    YouTubeGamingPage.goToGaming();
-    YouTubeGamingPage.clickTrendingViewAll();
-    YouTubeGamingPage.selectThirdTrendingVideo();
+    YoutubeGamingPage.goToGaming();
+    YoutubeGamingPage.clickTrendingViewAll();
+    YoutubeGamingPage.selectThirdTrendingVideo();
 
     // 1. Validasi ID Video pada URL Halaman Detail
     cy.get('@expectedVideoId').then((expectedVideoId) => {

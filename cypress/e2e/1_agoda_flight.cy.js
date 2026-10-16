@@ -1,10 +1,10 @@
-import AgodaFlightPage from '../support/pageObjects/AgodaFlightPage';
+import AgodaFlightPage from '../pages/AgodaFlightPage';
 
 describe('Agoda Flight Booking Test - End-to-End Scenario', () => {
   it('Should complete flight search, passenger input from fixture, and validate data on payment page', () => {
     
-    // Muat data dari cypress/fixtures/passenger.json
-    cy.fixture('passenger').then((passengerInfo) => {
+    // Muat data dari cypress/support/data.json
+    cy.fixture('data').then((passengerInfo) => {
 
       // 1. Visit URL & Select Flight Tab
       AgodaFlightPage.visit();

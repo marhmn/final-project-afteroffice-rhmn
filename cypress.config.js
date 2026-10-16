@@ -1,4 +1,8 @@
 const { defineConfig } = require('cypress');
+let envConfig = {};
+try {
+  envConfig = require('./cypress.env.json');
+} catch (e) {}
 
 module.exports = defineConfig({
   e2e: {
@@ -30,10 +34,9 @@ module.exports = defineConfig({
     video: true,
     videosFolder: 'cypress/reports/videos',
     numTestsKeptInMemory: 0,
+    fixturesFolder: 'cypress/support',
   },
   expose: {
-    agoda_url: 'https://www.agoda.com',
-    amazon_url: 'https://www.amazon.com',
-    youtube_url: 'https://www.youtube.com'
+    ...envConfig
   }
 });
