@@ -1,0 +1,19 @@
+{
+  "name": "final-project-afteroffice",
+  "version": "1.0.0",
+  "description": "Final Project AfterOffice",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress run --browser chrome",
+    "test:electron": "npx cypress run",
+    "open": "npx cypress open --browser chrome"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "cypress": "^16.2.0",
+    "cypress-mochawesome-reporter": "^5.0.0"
+  }
+}
